@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Kalkulator IPK Sederhana</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f9; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; }
+        input, select, button { padding: 8px; }
+        .result { margin-top: 15px; font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Kalkulator IP Semester</h2>
+    <div id="course-list">
+        <div class="row">
+            <input type="text" placeholder="Nama Mata Kuliah" class="course-name">
+            <input type="number" placeholder="SKS" class="course-sks">
+            <select class="course-grade">
+                <option value="4">A</option>
+                <option value="3">B</option>
+                <option value="2">C</option>
+                <option value="1">D</option>
+                <option value="0">F</option>
+            </select>
+        </div>
+    </div>
+    <button onclick="addCourse()">+ Tambah Matkul</button>
+    <button onclick="calculateGPA()">Hitung IP</button>
+    <div class="result" id="gpa-result">IP Semester: 0.00</div>
+
+    <hr>
+    <h2>Simulasi Target IPK</h2>
+    <div class="row">
+        <input type="number" id="current-gpa" placeholder="IPK Saat Ini" step="0.01">
+        <input type="number" id="completed-sks" placeholder="Total SKS Lulus">
+    </div>
+    <div class="row">
+        <input type="number" id="target-gpa" placeholder="Target IPK" step="0.01">
+        <input type="number" id="next-sks" placeholder="SKS Semester Ini">
+    </div>
+    <button onclick="simulateTarget()">Hitung Target</button>
+    <div class="result" id="target-result"></div>
+</div>
+
+<script>
+    function addCourse() {
+        const div = document.createElement('div');
+        div.className = 'row';
+        div.innerHTML = `
+            <input type="text" placeholder="Nama Mata Kuliah" class="course-name">
+            <input type="number" placeholder="SKS" class="course-sks">
+            <select class="course-grade">
+                <option value="4">A</option>
+                <option value="3">B</option>
+                <option value="2">C</option>
+                <option value="1">D</option>
+                <option value="0">F</option>
+            </select>
+        `;
+        document.getElementById('course-list').appendChild(div);
+    }
+
+    function calculateGPA() {
+        const sksList = document.querySelectorAll('.course-sks');
+        const gradeList = document.querySelectorAll('.course-grade');
+        let totalSks = 0;
+        let totalPoints = 0;
+
+        for (let i = 0; i < sksList.length; i++) {
+            const sks = parseInt(sksList[i].value);
+            const grade = parseFloat(gradeList[i].value);
+            totalSks += sks;
+            totalPoints += (sks * grade);
+        }
+
+        const gpa = totalPoints / totalSks;
+        document.getElementById('gpa-result').innerText = "IP Semester: " + gpa.toFixed(2);
+    }
+
+    function simulateTarget() {
+        const currentGpa = parseFloat(document.getElementById('current-gpa').value);
+        const completedSks = parseInt(document.getElementById('completed-sks').value);
+        const targetGpa = parseFloat(document.getElementById('target-gpa').value);
+        const nextSks = parseInt(document.getElementById('next-sks').value);
+
+        const totalTargetPoints = targetGpa * (completedSks + nextSks);
+        const currentPoints = currentGpa * completedSks;
+        const requiredGpa = (totalTargetPoints - currentPoints) / nextSks;
+
+        document.getElementById('target-result').innerText = 
+            "Anda butuh IP Semester minimal: " + requiredGpa.toFixed(2);
+    }
+</script>
+</body>
+</html>
